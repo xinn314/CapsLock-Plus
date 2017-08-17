@@ -32,7 +32,7 @@ gosub, settingsInit ;初始化设置
 
 gosub, bindWinsInit
 
-gosub, jsEval_init
+;gosub, jsEval_init
 setTimer, youdaoApiInit, -1 ;初始化翻译api
 gosub, getDefaultBrowser
 
