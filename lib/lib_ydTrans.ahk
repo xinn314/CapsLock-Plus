@@ -13,7 +13,7 @@ global youdaoApiString:=""
 global youdaoApiKey0, youdaoApiKey1
 youdaoApiKey0=12763084
 
-if(CLSets.TTranslate.apiType=1)
+if(CLSets.TTranslate.apiType=1) ;收费版
 {
 	if(CLSets.TTranslate.apiKey!="")
 	{
@@ -169,6 +169,26 @@ if(returnError) ;如果返回错误结果，显示出相应原因
 	}
 	goto, setTransText
 	return
+}
+else if (transJson.basic) { ;如果成功返回词典翻译
+	;获取单词
+	queryWord := transJson.query
+	
+	;中文单词处理
+	queryFirstWord := SubStr(queryWord, 1 [, 1])
+	foundPos := RegExMatch(queryFirstWord, "[a-z|A-Z]")
+	if(!foundPos)
+	{
+		queryWord := "[" queryWord "]"
+	}
+
+	;记录单词
+	IfNotExist, wordRecord
+	{
+		FileCreateDir, wordRecord
+	}
+    FileAppend, %queryWord%`n, wordRecord\wordRecord.txt
+
 }
  ;================拼MsgBox显示的内容
 {
