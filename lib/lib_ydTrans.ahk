@@ -8,37 +8,9 @@
 global TransEdit,transEditHwnd,transGuiHwnd,NativeString
 
 youdaoApiInit:
-	global youdaoApiString:=""
+	global youdaoApiString := ""
 
-	;  #Include *i youdaoApiKey.ahk
-	global youdaoApiKey0, youdaoApiKey1
-	youdaoApiKey0=12763084
-
-	if(CLSets.TTranslate.apiType=1) ;收费版
-	{
-		if(CLSets.TTranslate.apiKey!="")
-		{
-			key:=CLSets.TTranslate.apiKey
-			youdaoApiString=http://fanyi.youdao.com/paidapi/fanyiapi?key=%key%&type=data&doctype=json&q=
-		}
-		else if(youdaoApiKey1)
-		{
-			youdaoApiString=http://fanyi.youdao.com/paidapi/fanyiapi?key=%youdaoApiKey1%&type=data&doctype=json&q=
-		}
-	}
-	else
-	{
-		if(CLSets.TTranslate.apiKey!="")
-		{
-			key:=CLSets.TTranslate.apiKey
-			keyFrom:=ClSets.TTranslate.keyFrom
-			youdaoApiString=http://fanyi.youdao.com/openapi.do?keyfrom=%keyFrom%&key=%key%&type=data&doctype=json&version=1.1&q=
-		}
-		else if(youdaoApiKey0)
-		{
-			youdaoApiString=http://fanyi.youdao.com/openapi.do?keyfrom=CapsLock&key=%youdaoApiKey0%&type=data&doctype=json&version=1.1&q=
-		}
-	}
+	youdaoApiString := "https://openapi.youdao.com/api"
 	return
 
 setTransGuiActive:
@@ -53,15 +25,15 @@ ydTranslate(ss)
 		;      MsgBox, , , 文本过长，请重新选择。, 1
 		;      return 
 		;  }
-		ss:=RegExReplace(ss, "\s", " ") ;把所有空白符换成空格，因为如果有回车符的话，json转换时会出错
+		ss := RegExReplace(ss, "\s", " ") ;把所有空白符换成空格，因为如果有回车符的话，json转换时会出错
 		
 		;~ global 
 		
-		NativeString:=Trim(ss)
+		NativeString := Trim(ss)
 
 	transGui:
 		;~ WinClose, 有道翻译
-		MsgBoxStr:=NativeString?lang_yd_translating:""
+		MsgBoxStr := NativeString?lang_yd_translating:""
 
 		DetectHiddenWindows, On ;可以检测到隐藏窗口
 		WinGet, ifGuiExistButHide, Count, ahk_id %transGuiHwnd%
@@ -103,76 +75,86 @@ ydTranslate(ss)
 
 
 	ydApi:
-		UTF8Codes:="" ;重置要发送的代码
+		UTF8Codes := "" ;重置要发送的代码
 		SetFormat, integer, H
-		UTF8Codes:=UTF8encode(NativeString)
-		if(youdaoApiString="")
+
+		salt := "capslock"
+		youdaoApiKey := CLsets.TTranslate.ApiKey
+		youdaoApiSecret := CLsets.TTranslate.ApiKey
+		signStr := youdaoApiKey . NativeString . salt . youdaoApiSecret
+		youdaoApiSign := MD5(signStr)
+		UTF8Codes := UTF8encode(NativeString)
+
+		if(youdaoApiString == "" || youdaoApiSecret == "")
 		{
-			MsgBoxStr=%lang_yd_needKey%
+			MsgBoxStr = %lang_yd_needKey%
 			goto, setTransText
 		}
-		sendStr:=youdaoApiString . UTF8Codes
-		whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 
-		whr.Open("GET", sendStr)
+		requestUrl := youdaoApiString . "?q=" . UTF8Codes . "&from=auto&to=auto&appKey=" . youdaoApiKey . "&salt=" . salt . "&sign=" . youdaoApiSign
+		request := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+		request.Open("GET", requestUrl)
+
+		; MsgBoxStr := requestUrl
+		; goto, setTransText
+		; return
 
 		;~ MsgBox, 3
 		try
 		{
-			whr.Send()
+			request.Send()
 		}
 		catch
 		{
-			MsgBoxStr:=lang_yd_errorNoNet
+			MsgBoxStr := lang_yd_errorNoNet
 			goto, setTransText
 		}
 	afterSend:
-		responseStr := whr.ResponseText
+		responseStr := request.ResponseText
+		transJson := JSON.Load(responseStr)
+		returnError := transJson.errorCode
 
-		;~ transJson:=JSON_from(responseStr) 
-		transJson:=JSON.Load(responseStr)
-		; MsgBox, % responseStr
-		; MsgBox, % JSON_to(transJson) ;弹出整个翻译结果的json，测试用
-		returnError:=transJson.errorCode
 		if(returnError) ;如果返回错误结果，显示出相应原因
 		{
-			if(returnError==10)
+			if(returnError==101)
 			{
-				MsgBoxStr:=lang_yd_errorTooLong
+				MsgBoxStr := "缺少必填的参数，出现这个情况还可能是et的值和实际加密方式不对应"
 			}
-			if(returnError==11)
+			if(returnError==102)
 			{
-				MsgBoxStr:=lang_yd_errorNoResults
+				MsgBoxStr:="不支持的语言类型"
 			}
-			if(returnError==20)
+			if(returnError==103)
 			{
-				MsgBoxStr:=lang_yd_errorTextTooLong
+				MsgBoxStr:="翻译文本过长"
 			}
-			else if(returnError==30)
+			else if(returnError==104)
 			{
-				MsgBoxStr:=lang_yd_errorCantTrans
+				MsgBoxStr:="不支持的API类型"
 			}
-			else if(returnError==40)
+			else if(returnError==105)
 			{
-				MsgBoxStr:=lang_yd_errorLangType
+				MsgBoxStr:="不支持的签名类型"
 			}
-			else if(returnError==50)
+			else if(returnError==106)
 			{
-				MsgBoxStr:=lang_yd_errorKeyInvalid
+				MsgBoxStr:="不支持的响应类型"
 			}
-			else if(returnError==60)
+			else if(returnError==107)
 			{
-				MsgBoxStr:=lang_yd_errorSpendingLimit
+				MsgBoxStr:="不支持的传输加密类型"
 			}
-			else if(returnError==70)
+			else if(returnError==108)
 			{
-				MsgBoxStr:=lang_yd_errorNoFunds
+				MsgBoxStr:="appKey无效，注册账号， 登录后台创建应用和实例并完成绑定， 可获得应用ID和密钥等信息，其中应用ID就是appKey（ 注意不是应用密钥）"
 			}
 			goto, setTransText
 			return
 		}
 		else if (transJson.basic) { ;如果成功返回词典翻译
-			recordQueryWord(transJson.query)
+			if (CLsets.TTranslate.isRecordWord == 1) {
+				recordQueryWord(transJson.query)
+			}
 		}
 	
  	;================拼MsgBox显示的内容
@@ -298,4 +280,12 @@ recordQueryWord(queryWord) {
 		FileCreateDir, wordRecord
 	}
 	FileAppend, %queryWord%`n, wordRecord\wordRecord.txt
+}
+
+MD5(str) {
+	VarSetCapacity( MD5_CTX,104,0 ), DllCall( "advapi32\MD5Init", UInt,&MD5_CTX )
+ 	DllCall( "advapi32\MD5Update", UInt, &MD5_CTX, [color=red]A_IsUnicode ? "AStr" : "Str"[/color], str, UInt, StrLen(str) ), DllCall( "advapi32\MD5Final", UInt, &MD5_CTX )
+	Loop % StrLen( Hex:="123456789abcdef0" )
+		N := NumGet( MD5_CTX,87+A_Index,"Char"), MD5 .= SubStr(Hex,N>>4,1) . SubStr(Hex,N&15,1)
+	Return MD5
 }
