@@ -15,7 +15,8 @@ global lang_clq_noCmd:="没有该命令"
 ; ydTrans.ahk
 global lang_yd_translating:="翻译中...  （如果网络太差，翻译请求会暂时阻塞程序，稍等就好）"
 global lang_yd_name:="有道翻译"
-global lang_yd_needKey:="缺少有道翻译API的key，有道翻译无法使用"
+global lang_yd_needKey:="缺少有道翻译API的key或密匙，有道翻译无法使用"
+global lang_yd_secret:="缺少有道翻译API的密匙，有道翻译无法使用"
 global lang_yd_fileNotExist:="文件（文件夹）不存在"
 global lang_yd_errorNoNet:="发送异常，可能是网络已断开"
 global lang_yd_errorTooLong:="部分句子过长"
@@ -24,6 +25,7 @@ global lang_yd_errorTextTooLong:="要翻译的文本过长"
 global lang_yd_errorCantTrans:="无法进行有效的翻译"
 global lang_yd_errorLangType:="不支持的语言类型"
 global lang_yd_errorKeyInvalid:="无效的key"
+global lang_yd_errorKeySignInvalid:="签名检验失败"
 global lang_yd_errorSpendingLimit:="已达到今日消费上限，或者请求长度超过今日可消费字符数"
 global lang_yd_errorNoFunds:="帐户余额不足"
 global lang_yd_trans:="------------------------------------有道翻译------------------------------------"
@@ -255,17 +257,11 @@ progressColor=0x00cc99
 ;有道api接口
 ;翻译功能通过调用有道的api实现。
 ;接口的请求频率限制为每小时1000次，超过限制会被封禁。也就是说所有使用Capslock+翻译的人一小时内翻译的次数加起来不能超过1000次。
-;有道api网址：http://fanyi.youdao.com/openapi
+;有道api网址：http://ai.youdao.com/
 
-;接口类型，0为免费版，1为收费版。通过上面的网址申请的是免费版的，收费版是需要 email 他们来申请的。
-apiType=0
-
-;免费版的有道 api key 的 keyfrom 参数，申请 api 时要求填写的。收费版的不需要填写。
-keyFrom=xxx
-
-;有道api的key，如果自己申请到key，可以填入，这样就不用和其他人共用api接口，留空则使用自带的key，所有人共用
-;注意如果是免费版的key，apiType也要相应设置为0，收费版的填写1
 apiKey=0123456789
+apiSecret=xxxxxxxxxxx
+isRecordWord=1
 
 ;----------------------------------------------------------------;
 ; ##按键功能设置
