@@ -364,3 +364,41 @@ SystemCursor(OnOff:=1)   ; 初始化 = "I","Init"; 隐藏 = 0,"Off"; 切换 = -1
         DllCall( "SetSystemCursor", "Ptr",h_cursor, "UInt",c%A_Index% )
     }
 }
+
+MD5(string, encoding = "UTF-8", byref hash = 0, byref hashlength = 0)
+{
+	chrlength := (encoding = "CP1200" || encoding = "UTF-16") ? 2 : 1
+    length := (StrPut(string, encoding) - 1) * chrlength
+    VarSetCapacity(data, length, 0)
+    StrPut(string, &data, floor(length / chrlength), encoding)
+
+	static h := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"]
+    static b := h.minIndex()
+    hProv := hHash := o := ""
+    if (DllCall("advapi32\CryptAcquireContext", "Ptr*", hProv, "Ptr", 0, "Ptr", 0, "UInt", 24, "UInt", 0xf0000000))
+    {
+        if (DllCall("advapi32\CryptCreateHash", "Ptr", hProv, "UInt", 0x8003, "UInt", 0, "UInt", 0, "Ptr*", hHash))
+        {
+            if (DllCall("advapi32\CryptHashData", "Ptr", hHash, "Ptr", &data, "UInt", length, "UInt", 0))
+            {
+                if (DllCall("advapi32\CryptGetHashParam", "Ptr", hHash, "UInt", 2, "Ptr", 0, "UInt*", hashlength, "UInt", 0))
+                {
+                    VarSetCapacity(hash, hashlength, 0)
+                    if (DllCall("advapi32\CryptGetHashParam", "Ptr", hHash, "UInt", 2, "Ptr", &hash, "UInt*", hashlength, "UInt", 0))
+                    {
+                        loop % hashlength
+                        {
+                            v := NumGet(hash, A_Index - 1, "UChar")
+                            o .= h[(v >> 4) + b] h[(v & 0xf) + b]
+                        }
+                    }
+                }
+            }
+            DllCall("advapi32\CryptDestroyHash", "Ptr", hHash)
+        }
+        DllCall("advapi32\CryptReleaseContext", "Ptr", hProv, "UInt", 0)
+    }
+
+	; 不知道为什么多了 0x，暂时处理直接删除
+	return RegExReplace(o, "0x", "")
+}
