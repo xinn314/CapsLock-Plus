@@ -4,15 +4,12 @@
    ExitApp
 }
 
-
 IfExist, capslock+icon.ico
 {
 ;freezing icon
 menu, TRAY, Icon, capslock+icon.ico, , 1
 }
 Menu, Tray, Icon,,, 1
-
-
 
 global CLversion:="Version: 2.7.0.0 | 2016-11-30`n`nCopyright 2016 Chen JunKai" 
 
@@ -150,6 +147,7 @@ return
 ;  for k,v in KEY_TO_NAME{
 ;      msgbox, % v
 ;  }
+
 a::
 b::
 c::
@@ -671,7 +669,6 @@ try
 Capslock2:=""
 return
 
-
 ;  #s::
 ;      keyFunc_activateSideWin("l")
 ;  Capslock2:=""
@@ -738,8 +735,46 @@ try
     runFunc("KeyFunc_close_notepad")
 return
 
+; CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
+; EdgeDist := 10 ; 离开边缘像素距离
+; MouseX := "" ; 鼠标位置 x 轴
+; MouseY := "" ; 鼠标位置 y 轴
 
+; 屏幕上边缘滚动鼠标来调节音量.
+#If CursorIsLeftEdge()
+WheelUp::Send {Volume_Up}
+WheelDown::Send {Volume_Down}
+return
 
+; 屏幕左上角点击静音.
+#If CursorIsLeftTopEdge()
+LButton::Send,{Volume_Mute}
+return
+
+MouseIsOver(WinTitle) {
+    MouseGetPos,,, Win
+    return WinExist(WinTitle . " ahk_id " . Win)
+}
+
+CursorIsLeftEdge() {
+    CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
+    MouseGetPos, xpos, ypos
+    if (ypos<10) {
+        return true
+    } else {
+        return false
+    }
+}
+
+CursorIsLeftTopEdge() {
+    CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
+    MouseGetPos, xpos, ypos
+    if (ypos<10 && xpos<10) {
+        return true
+    } else {
+        return false
+    }
+}
 
 GuiClose:
 GuiEscape:
