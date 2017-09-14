@@ -727,9 +727,11 @@ return
 ;      Capslock2:=""
 ;  return
 
-
-
 #If
+
+; 修改 PrintScreen 键为 QQ 截图快捷键 Ctrl+Alt+A
+PrintScreen::Send ^!a
+
 
 
 
