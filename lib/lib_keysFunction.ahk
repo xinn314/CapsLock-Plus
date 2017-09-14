@@ -132,6 +132,31 @@ keyFunc_translate(){
     Return
 }
 
+keyFunc_note() {
+    IfNotExist, note
+	{
+		FileCreateDir, note
+	}
+    IfNotExist, note\note.txt
+	{
+		FileAppend,, note\note.txt
+	}
+    Run, note\note.txt
+    Return
+}
+
+KeyFunc_close_notepad()
+{
+	if(WinActive("ahk_class Notepad"))
+	{
+		Winclose, A
+	}
+	else
+	{
+		send ^w
+	}
+}
+
 
 keyFunc_end(){
     SendInput,{End}

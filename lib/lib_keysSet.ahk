@@ -48,6 +48,8 @@ if(!keyset.caps_s)
     keyset.caps_s:="keyFunc_moveLeft"
 if(!keyset.caps_t)
     keyset.caps_t:="keyFunc_translate"
+if(!keyset.ctrl_w)
+    keyset.ctrl_w:="KeyFunc_close_notepad"
 if(!keyset.caps_u)
     keyset.caps_u:="keyFunc_selectHome"
 if(!keyset.caps_v)
@@ -64,9 +66,11 @@ if(!keyset.caps_z)
 if(!keyset.caps_backquote)
     keyset.caps_backquote:="keyFunc_winbind_activate(9)"
 if(!keyset.caps_1)
-    keyset.caps_1:="keyFunc_winbind_activate(1)"
-if(!keyset.caps_2)
-    keyset.caps_2:="keyFunc_winbind_activate(2)"
+    keyset.caps_1:="keyFunc_note"
+; if(!keyset.caps_1)
+;     keyset.caps_1:="keyFunc_winbind_activate(1)"
+; if(!keyset.caps_2)
+;     keyset.caps_2:="keyFunc_winbind_activate(2)"
 if(!keyset.caps_3)
     keyset.caps_3:="keyFunc_winbind_activate(3)"
 if(!keyset.caps_4)

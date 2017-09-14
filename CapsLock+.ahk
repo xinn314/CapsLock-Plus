@@ -732,6 +732,11 @@ return
 ; 修改 PrintScreen 键为 QQ 截图快捷键 Ctrl+Alt+A
 PrintScreen::Send ^!a
 
+; ctrl+w 关闭记事本
+$^w::
+try
+    runFunc("KeyFunc_close_notepad")
+return
 
 
 
