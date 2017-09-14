@@ -1,3 +1,5 @@
+## 原作者：[CJK](https://github.com/wo52616111/capslock-plus)
+
 [功能说明文档](http://cjkis.me/capslock+/)
 
 
