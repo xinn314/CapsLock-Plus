@@ -730,50 +730,44 @@ return
 PrintScreen::Send ^!a
 
 ; ctrl+w 关闭记事本
-$^w::
-try
-    runFunc("KeyFunc_close_notepad")
-return
+$^w::runFunc("KeyFunc_close_notepad")
 
-; CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
-; EdgeDist := 10 ; 离开边缘像素距离
-; MouseX := "" ; 鼠标位置 x 轴
-; MouseY := "" ; 鼠标位置 y 轴
-
-; 屏幕上边缘滚动鼠标来调节音量.
-#If CursorIsLeftEdge()
+; 屏幕上边缘滚动鼠标滚轮来调节音量.
+#If MouseIsOver("t")
 WheelUp::Send {Volume_Up}
 WheelDown::Send {Volume_Down}
 return
 
 ; 屏幕左上角点击静音.
-#If CursorIsLeftTopEdge()
-LButton::Send,{Volume_Mute}
+#If MouseIsOver("lt")
+LButton::Send {Volume_Mute}
 return
 
-MouseIsOver(WinTitle) {
-    MouseGetPos,,, Win
-    return WinExist(WinTitle . " ahk_id " . Win)
-}
+; 屏幕左边缘滚动滚轮翻页.
+#If MouseIsOver("l")
+WheelUp::Send {PgUp}
+WheelDown::Send {PgDn}
+return
 
-CursorIsLeftEdge() {
-    CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
-    MouseGetPos, xpos, ypos
-    if (ypos<10) {
-        return true
-    } else {
-        return false
-    }
-}
+; 在任务栏上滚动鼠标切换 win10 虚拟桌面.
+#If MouseIsOver("control", "ahk_class Shell_TrayWnd")
+WheelUp::Send ^#{left}
+WheelDown::Send ^#{right}
+return
 
-CursorIsLeftTopEdge() {
+MouseIsOver(position, winTitle := "") {
     CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
-    MouseGetPos, xpos, ypos
-    if (ypos<10 && xpos<10) {
-        return true
-    } else {
-        return false
+    MouseGetPos, mouseX, mouseY, winId
+    if (position == "l") { ; 左边缘
+        return mouseX<10 && mouseY>10
+    } else if (position == "t") { ; 上边缘
+        return mouseY<10
+    } else if (position == "lt") { ; 左上角
+        return mouseX<10 && mouseY<10
+    } else if (position == "control") { ; 窗口
+        return WinExist(winTitle . " ahk_id " . winId)
     }
+    return false
 }
 
 GuiClose:
