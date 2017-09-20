@@ -729,13 +729,16 @@ return
 ; 修改 PrintScreen 键为 QQ 截图快捷键 Ctrl+Alt+A
 PrintScreen::Send ^!a
 
-; ctrl+w 关闭记事本
-$^w::runFunc("KeyFunc_close_notepad")
+; Ctrl+W 或 Esc 关闭记事本
+#IfWinActive, ahk_class Notepad
+Esc::WinClose, A
+$^w::WinClose, A
 
 ; 屏幕上边缘滚动鼠标滚轮来调节音量.
 #If MouseIsOver("t")
 WheelUp::Send {Volume_Up}
 WheelDown::Send {Volume_Down}
+; LButton::send {Media_Play_Pause}
 return
 
 ; 屏幕左上角点击静音.
@@ -754,21 +757,6 @@ return
 WheelUp::Send ^#{left}
 WheelDown::Send ^#{right}
 return
-
-MouseIsOver(position, winTitle := "") {
-    CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
-    MouseGetPos, mouseX, mouseY, winId
-    if (position == "l") { ; 左边缘
-        return mouseX<10 && mouseY>10
-    } else if (position == "t") { ; 上边缘
-        return mouseY<10
-    } else if (position == "lt") { ; 左上角
-        return mouseX<10 && mouseY<10
-    } else if (position == "control") { ; 窗口
-        return WinExist(winTitle . " ahk_id " . winId)
-    }
-    return false
-}
 
 GuiClose:
 GuiEscape:

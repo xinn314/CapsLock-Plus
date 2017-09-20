@@ -48,8 +48,6 @@ if(!keyset.caps_s)
     keyset.caps_s:="keyFunc_moveLeft"
 if(!keyset.caps_t)
     keyset.caps_t:="keyFunc_translate"
-if(!keyset.ctrl_w)
-    keyset.ctrl_w:="KeyFunc_close_notepad"
 if(!keyset.caps_u)
     keyset.caps_u:="keyFunc_selectHome"
 if(!keyset.caps_v)

@@ -402,3 +402,19 @@ MD5(string, encoding = "UTF-8", byref hash = 0, byref hashlength = 0)
 	; 不知道为什么多了 0x，暂时处理直接删除
 	return RegExReplace(o, "0x", "")
 }
+
+; 判断鼠标是否在某一范围内
+MouseIsOver(position, winTitle := "") {
+    CoordMode, Mouse, Screen ; 指定鼠标坐标以屏幕为基准
+    MouseGetPos, mouseX, mouseY, winId
+    if (position == "l") { ; 左边缘
+        return mouseX<10 && mouseY>10
+    } else if (position == "t") { ; 上边缘
+        return mouseY<10
+    } else if (position == "lt") { ; 左上角
+        return mouseX<10 && mouseY<10
+    } else if (position == "control") { ; 窗口
+        return WinExist(winTitle . " ahk_id " . winId)
+    }
+    return false
+}

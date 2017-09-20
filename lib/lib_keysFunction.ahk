@@ -145,18 +145,6 @@ keyFunc_note() {
     Return
 }
 
-KeyFunc_close_notepad()
-{
-	if(WinActive("ahk_class Notepad"))
-	{
-		Winclose, A
-	}
-	else
-	{
-		send ^w
-	}
-}
-
 
 keyFunc_end(){
     SendInput,{End}
