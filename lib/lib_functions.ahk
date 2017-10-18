@@ -413,6 +413,8 @@ MouseIsOver(position, winTitle := "") {
         return mouseY<10
     } else if (position == "lt") { ; 左上角
         return mouseX<10 && mouseY<10
+    } else if (position == "tl") { ; 上边缘偏右侧
+        return mouseX>1666 && mouseX<1800 && mouseY<1
     } else if (position == "control") { ; 窗口
         return WinExist(winTitle . " ahk_id " . winId)
     }

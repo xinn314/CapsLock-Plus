@@ -723,7 +723,6 @@ return
 ;      keyFunc_outWinMinimizeStack()
 ;      Capslock2:=""
 ;  return
-
 #If
 
 ; 修改 PrintScreen 键为 QQ 截图快捷键 Ctrl+Alt+A
@@ -733,30 +732,40 @@ PrintScreen::Send ^!a
 #IfWinActive, ahk_class Notepad
 Esc::WinClose, A
 $^w::WinClose, A
+return
 
 ; 屏幕上边缘滚动鼠标滚轮来调节音量.
 #If MouseIsOver("t")
 WheelUp::Send {Volume_Up}
 WheelDown::Send {Volume_Down}
-; LButton::send {Media_Play_Pause}
+; LButton::send {Media_Play_Pause} ; 容易误触发
 return
+#If
 
 ; 屏幕左上角点击静音.
 #If MouseIsOver("lt")
 LButton::Send {Volume_Mute}
 return
 
+; 屏幕上边缘偏右侧点击播放/停止音乐
+#If MouseIsOver("tl")
+LButton::send {Media_Play_Pause}
+return
+#If
+
 ; 屏幕左边缘滚动滚轮翻页.
 #If MouseIsOver("l")
 WheelUp::Send {PgUp}
 WheelDown::Send {PgDn}
 return
+#If
 
 ; 在任务栏上滚动鼠标切换 win10 虚拟桌面.
 #If MouseIsOver("control", "ahk_class Shell_TrayWnd")
 WheelUp::Send ^#{left}
 WheelDown::Send ^#{right}
 return
+#If
 
 GuiClose:
 GuiEscape:

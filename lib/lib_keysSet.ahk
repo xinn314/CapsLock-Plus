@@ -62,13 +62,13 @@ if(!keyset.caps_z)
     keyset.caps_z:="keyFunc_undoRedo"
 
 if(!keyset.caps_backquote)
-    keyset.caps_backquote:="keyFunc_winbind_activate(9)"
+    keyset.caps_backquote:="keyFunc_myNote"
 if(!keyset.caps_1)
-    keyset.caps_1:="keyFunc_note"
+    keyset.caps_1:="keyFunc_createNote"
 ; if(!keyset.caps_1)
 ;     keyset.caps_1:="keyFunc_winbind_activate(1)"
-; if(!keyset.caps_2)
-;     keyset.caps_2:="keyFunc_winbind_activate(2)"
+if(!keyset.caps_2)
+    keyset.caps_2:="keyFunc_openNoteDir"
 if(!keyset.caps_3)
     keyset.caps_3:="keyFunc_winbind_activate(3)"
 if(!keyset.caps_4)

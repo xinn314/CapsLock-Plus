@@ -132,7 +132,8 @@ keyFunc_translate(){
     Return
 }
 
-keyFunc_note() {
+; 打开 note 目录下 note.txt 的笔记
+keyFunc_myNote() {
     IfNotExist, note
 	{
 		FileCreateDir, note
@@ -145,6 +146,30 @@ keyFunc_note() {
     Return
 }
 
+; 创建今天年月日为文件名的的笔记，已存在则打开
+keyFunc_createNote() {
+    IfNotExist, note
+	{
+		FileCreateDir, note
+	}
+    FormatTime, today, '', yMMdd
+    IfNotExist, note\%today%.txt
+	{
+		FileAppend,, note\%today%.txt
+	}
+    Run, note\%today%.txt
+    Return
+}
+
+; 打开笔记本窗口
+keyFunc_openNoteDir() {
+    IfNotExist, note
+	{
+		FileCreateDir, note
+	}
+    Run, note\
+    Return
+}
 
 keyFunc_end(){
     SendInput,{End}
